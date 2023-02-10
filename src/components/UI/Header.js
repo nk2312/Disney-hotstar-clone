@@ -9,30 +9,30 @@ import { useNavigate } from 'react-router-dom';
 function Header() {
   const uname = useSelector((state) => state.user.name);
   const uphoto = useSelector((state) => state.user.photo);
-  const [user,setUser]=useState();
+ 
 
   let navigate=useNavigate();
 
   const dispatch = useDispatch();
 
+
+  //this useEffect prevent the user to logout when we refresh the page.
   useEffect(()=>{auth.onAuthStateChanged(async (user)=>{
+    console.log(user);
     if(user){
-        dispatch(signIn(user));
+        dispatch(signIn({name:user.displayName,email:user.email,photo:user.photoURL}));
         navigate('/');
     }
-  })},[])
+  })},[uname])
 
   const LoginHandler = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
-        console.log(result);
-
         const userDetail={
             name:result.user.displayName,
             email:result.user.email,
             photo:result.user.photoURL
         }
-        setUser(userDetail);
         dispatch(signIn(userDetail));
         navigate('/');
         
